@@ -35,10 +35,26 @@ FontxFile fx32M[2];
 #define CONFIG_OFFSETX	  52
 #define CONFIG_OFFSETY	  40
 
+#if defined CONFIG_SHT30_GREEN
+#define MAIN_COLOR GREEN
+#elif defined CONFIG_SHT30_YELLOW
+#define MAIN_COLOR YELLOW
+#elif defined CONFIG_SHT30_RED
+#define MAIN_COLOR RED
+#elif defined CONFIG_SHT30_CYAN
+#define MAIN_COLOR CYAN
+#elif defined CONFIG_SHT30_PURPLE
+#define MAIN_COLOR PURPLE
+#elif defined CONFIG_SHT30_WHITE
+#define MAIN_COLOR WHITE
+#elif defined CONFIG_SHT30_GRAY
+#define MAIN_COLOR GRAY
+#elif defined CONFIG_SHT30_BLUE
+#define MAIN_COLOR BLUE
+#endif
 
 void app_setup_spiffs(void)
 {
-    
 	ESP_LOGI(TAG, "Initializing SPIFFS");
 	esp_vfs_spiffs_conf_t conf = {
 		.base_path = "/spiffs",
@@ -96,9 +112,9 @@ void app_main(void)
   uint16_t temperature;
   uint16_t humidity;
   char *temp_title = "Temp: ";
-  char *temp_unit = "c*";
+  char *temp_unit = "[c']";
   char *hum_title = "Hum: ";
-  char *hum_unit = "%RH";
+  char *hum_unit = "[%RH]";
   uint8_t temp_text[48];
   uint8_t hum_text[48];
 
@@ -113,11 +129,14 @@ void app_main(void)
 
   // sht30_deinit();
   ESP_ERROR_CHECK(sht30_init());
-  lcdDrawString(&dev, fx24G, 80, 10, (uint8_t*)temp_title, WHITE);
-  lcdDrawString(&dev, fx24G, 40, 10, (uint8_t*)hum_title, WHITE);
 
-  lcdDrawString(&dev, fx24G, 80, 160, (uint8_t*)temp_unit, WHITE);
-  lcdDrawString(&dev, fx24G, 40, 160, (uint8_t*)hum_unit, WHITE);
+  lcdDrawFillRect(&dev, 108, 0, 140, 240, MAIN_COLOR);
+  lcdDrawFillRect(&dev, 50, 0, 54, 240, MAIN_COLOR);
+  lcdDrawString(&dev, fx32G, 102, 10, (uint8_t*)"SHT30", BLACK);
+  lcdDrawString(&dev, fx24G, 68, 20, (uint8_t*)temp_title, MAIN_COLOR);
+  lcdDrawString(&dev, fx24G, 14, 32, (uint8_t*)hum_title, MAIN_COLOR);
+  lcdDrawString(&dev, fx16G, 68, 180, (uint8_t*)temp_unit, MAIN_COLOR);
+  lcdDrawString(&dev, fx16G, 14, 180, (uint8_t*)hum_unit, MAIN_COLOR);
 
   while (true) {
     ESP_LOGI(TAG, "SHT3x status = %x", status);
@@ -125,14 +144,14 @@ void app_main(void)
     ESP_LOGI(TAG, "SHT3x temperature = %02f, humidity = %02f", sht30_calc_celsius(temperature), sht30_calc_relative_humidity(humidity));
     // ESP_ERROR_CHECK(sht30_softreset());
     if (err == ESP_OK) {
-      lcdDrawString(&dev, fx24G, 80, 80, temp_text, BLACK);
-      lcdDrawString(&dev, fx24G, 40, 80, hum_text, BLACK);
+      lcdDrawString(&dev, fx32G, 64, 90, temp_text, BLACK);
+      lcdDrawString(&dev, fx32G, 12, 90, hum_text, BLACK);
       sprintf((char*)temp_text, "%0.2f",
               sht30_calc_celsius(temperature));
-      lcdDrawString(&dev, fx24G, 80, 80, temp_text, WHITE);
+      lcdDrawString(&dev, fx32G, 64, 90, temp_text, WHITE);
       sprintf((char*)hum_text, "%0.2f",
               sht30_calc_relative_humidity(humidity));
-      lcdDrawString(&dev, fx24G, 40, 80, hum_text, WHITE);
+      lcdDrawString(&dev, fx32G, 12, 90, hum_text, WHITE);
     }
     vTaskDelay(pdMS_TO_TICKS(500));
     sht30_read_status(&status);

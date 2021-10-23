@@ -1,0 +1,22 @@
+menu "SHT30 sample"
+  choice SHT30_COLORS
+    prompt "main color in Display 16bit(RGB=5,6,5)"
+    default SHT30_YELLOW
+    config SHT30_YELLOW
+      bool "yellow"
+    config SHT30_GREEN
+      bool "green"
+    config SHT30_RED
+      bool "red"
+    config SHT30_CYAN
+      bool "cyan"
+    config SHT30_PURPLE
+      bool "purple"
+    config SHT30_WHITE
+      bool "white"
+    config SHT30_GRAY
+      bool "gray"
+    config SHT30_BLUE
+      bool "blue"
+  endchoice
+endmenu
