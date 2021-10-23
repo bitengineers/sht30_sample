@@ -3,7 +3,7 @@
 
 ## Description
 
-A Sample program for Sensirion SHT30 digital temperature/humidity sensor. 
+This is a sample program for the Sensirion SHT30 digital temperature and humidity sensor that is used in the M5Stack ENVIII sensor.
 
 [Sensirion official page](https://www.sensirion.com/jp/environmental-sensors/humidity-sensors/digital-humidity-sensors-for-various-applications/)
 
