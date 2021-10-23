@@ -1,0 +1,3 @@
+[submodule "components/axp192"]
+	path = components/axp192
+	url = git@github.com:bitengineers/esp32_axp192.git

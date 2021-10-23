@@ -96,10 +96,11 @@ void app_main(void)
   uint16_t temperature;
   uint16_t humidity;
   char *temp_title = "Temp: ";
-  char *temp_unit = "c\"";
+  char *temp_unit = "c*";
   char *hum_title = "Hum: ";
   char *hum_unit = "%RH";
-  uint8_t text[48];
+  uint8_t temp_text[48];
+  uint8_t hum_text[48];
 
   axp192_init();
   axp192_ldo2(true);
@@ -112,23 +113,26 @@ void app_main(void)
 
   // sht30_deinit();
   ESP_ERROR_CHECK(sht30_init());
+  lcdDrawString(&dev, fx24G, 80, 10, (uint8_t*)temp_title, WHITE);
+  lcdDrawString(&dev, fx24G, 40, 10, (uint8_t*)hum_title, WHITE);
+
+  lcdDrawString(&dev, fx24G, 80, 160, (uint8_t*)temp_unit, WHITE);
+  lcdDrawString(&dev, fx24G, 40, 160, (uint8_t*)hum_unit, WHITE);
 
   while (true) {
     ESP_LOGI(TAG, "SHT3x status = %x", status);
     err = sht30_read_measured_values(&temperature, &humidity);
     ESP_LOGI(TAG, "SHT3x temperature = %02f, humidity = %02f", sht30_calc_celsius(temperature), sht30_calc_relative_humidity(humidity));
     // ESP_ERROR_CHECK(sht30_softreset());
-    if (err != ESP_OK) {
-      // sht30_stop_measurement();
-      // sht30_softreset();
-    } else {
-      lcdFillScreen(&dev, BLACK);
-      sprintf((char*)text, "%s %0.2f %s",
-              temp_title, sht30_calc_celsius(temperature), temp_unit);
-      lcdDrawString(&dev, fx24G, 80, 10, text, WHITE);
-      sprintf((char*)text, "%s %0.2f %s",
-              hum_title, sht30_calc_relative_humidity(humidity), hum_unit);
-      lcdDrawString(&dev, fx24G, 40, 10, text, WHITE);
+    if (err == ESP_OK) {
+      lcdDrawString(&dev, fx24G, 80, 80, temp_text, BLACK);
+      lcdDrawString(&dev, fx24G, 40, 80, hum_text, BLACK);
+      sprintf((char*)temp_text, "%0.2f",
+              sht30_calc_celsius(temperature));
+      lcdDrawString(&dev, fx24G, 80, 80, temp_text, WHITE);
+      sprintf((char*)hum_text, "%0.2f",
+              sht30_calc_relative_humidity(humidity));
+      lcdDrawString(&dev, fx24G, 40, 80, hum_text, WHITE);
     }
     vTaskDelay(pdMS_TO_TICKS(500));
     sht30_read_status(&status);
@@ -136,6 +140,7 @@ void app_main(void)
       sht30_reset_status();
       vTaskDelay(pdMS_TO_TICKS(1000));
     }
+
   }
   // ESP_ERROR_CHECK(sht30_deinit());
 }

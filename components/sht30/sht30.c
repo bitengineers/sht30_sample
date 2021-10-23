@@ -59,7 +59,7 @@ esp_err_t sht30_read_status(uint16_t *out)
   i2c_master_stop(cmd);
   err = i2c_master_cmd_begin(SHT30_I2C, cmd, pdMS_TO_TICKS(100));
   *out = (status[0] << 8) | status[1];
-
+  i2c_cmd_link_delete(cmd);
   return err;
 }
 
@@ -75,6 +75,7 @@ esp_err_t sht30_reset_status(void)
   i2c_master_write_byte(cmd, code[1], true);
   i2c_master_stop(cmd);
   err = i2c_master_cmd_begin(SHT30_I2C, cmd, pdMS_TO_TICKS(100));
+  i2c_cmd_link_delete(cmd);
   return err;
 }
 
@@ -89,7 +90,7 @@ esp_err_t sht30_softreset(void)
   i2c_master_write_byte(cmd, code[1], true);
   i2c_master_stop(cmd);
   err = i2c_master_cmd_begin(SHT30_I2C, cmd, pdMS_TO_TICKS(1000));
-
+  i2c_cmd_link_delete(cmd);
   return err;
 }
 
@@ -115,6 +116,7 @@ esp_err_t sht30_read_measured_values(uint16_t *temperature, uint16_t *humidity)
   i2c_master_read_byte(cmd, crc+1, I2C_MASTER_NACK);
   i2c_master_stop(cmd);
   err = i2c_master_cmd_begin(SHT30_I2C, cmd, pdMS_TO_TICKS(100));
+  i2c_cmd_link_delete(cmd);
 
   ESP_LOGD("sht30", "temp %d(%x, %x), crc %d(%x), check result = %d", (uint8_t)((temp[0]<<8)+temp[1]), temp[0], temp[1], crc[0], crc[0], sht30_check_crc(temp, crc[0]));
   
@@ -146,7 +148,7 @@ esp_err_t sht30_stop_measurement(void)
   i2c_master_write_byte(cmd, code[1], true);
   i2c_master_stop(cmd);
   err = i2c_master_cmd_begin(SHT30_I2C, cmd, pdMS_TO_TICKS(300));
-
+  i2c_cmd_link_delete(cmd);
   return err;
 }
 
@@ -164,6 +166,7 @@ esp_err_t sht30_heater(bool b)
   i2c_master_write_byte(cmd, c[1], true);  
   i2c_master_stop(cmd);
   err = i2c_master_cmd_begin(SHT30_I2C, cmd, pdMS_TO_TICKS(100));
+  i2c_cmd_link_delete(cmd);
   return err;
 }
 
