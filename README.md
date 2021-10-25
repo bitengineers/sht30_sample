@@ -13,7 +13,7 @@ This is a personal tools to check how sht30 works.
 
 ```
 idf.py menuconfig # optional
-idf.py build flash
+idf.py build flash -b 115200
 ```
 
 ## Screenhot
