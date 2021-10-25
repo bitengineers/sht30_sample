@@ -20,3 +20,9 @@ idf.py build flash -b 115200
 
 
 ![sht30_sample_on_stickc](https://user-images.githubusercontent.com/716663/138555897-40ddd4b2-5bed-49cc-a686-74c015feb188.jpeg)
+
+
+## Reference
+
+- AXP192 driver https://github.com/bitengineers/esp32_axp192
+- st7789 driver & font related https://github.com/nopnop2002/esp-idf-m5stickC-Plus
